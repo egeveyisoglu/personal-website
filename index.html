@@ -1059,23 +1059,24 @@
     </style>
 </head>
 <body>
-    <nav class="navbar">
-        <a href="#hero" class="navbar-logo">EV</a>
-        <div class="navbar-menu" id="navbarMenu">
-            <a href="#hero" class="navbar-item">Home</a>
-            <a href="#education" class="navbar-item">Education</a>
-            <a href="#experience" class="navbar-item">Experience</a>
-            <a href="#skills" class="navbar-item">Skills</a>
-            <a href="#certificates" class="navbar-item">Certificates</a>
-            <a href="#projects" class="navbar-item">Projects</a>
-            <a href="#contact" class="navbar-item">Contact</a>
-        </div>
-        <button class="navbar-toggle" onclick="toggleMenu()">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
-    </nav>
+<nav class="navbar">
+    <a href="/" class="navbar-logo">EV</a>
+    <div class="navbar-menu" id="navbarMenu">
+        <a href="/" class="navbar-item">Home</a>
+        <a href="/about" class="navbar-item">About</a>
+        <a href="/education" class="navbar-item">Education</a>
+        <a href="/experience" class="navbar-item">Experience</a>
+        <a href="/skills" class="navbar-item">Skills</a>
+        <a href="/certificates" class="navbar-item">Certificates</a>
+        <a href="/projects" class="navbar-item">Projects</a>
+        <a href="/contact" class="navbar-item">Contact</a>
+    </div>
+    <button class="navbar-toggle" onclick="toggleMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+</nav>
 
     <div class="bg-grid"></div>
     <div class="bg-shapes">
@@ -1350,71 +1351,80 @@
     </section>
 
     <script>
-        function toggleTheme() {
-            const body = document.body;
-            const currentTheme = body.getAttribute('data-theme');
-            const themeText = document.querySelector('.theme-text');
-            const themeIcon = document.querySelector('.theme-icon');
+function toggleTheme() {
+    const body = document.body;
+    const currentTheme = body.getAttribute('data-theme');
+    const themeText = document.querySelector('.theme-text');
+    const themeIcon = document.querySelector('.theme-icon');
 
-            if (currentTheme === 'light') {
-                body.removeAttribute('data-theme');
-                themeText.textContent = 'Dark';
-                themeIcon.textContent = '🌙';
-            } else {
-                body.setAttribute('data-theme', 'light');
-                themeText.textContent = 'Light';
-                themeIcon.textContent = '☀️';
+    if (currentTheme === 'light') {
+        body.removeAttribute('data-theme');
+        themeText.textContent = 'Dark';
+        themeIcon.textContent = '🌙';
+    } else {
+        body.setAttribute('data-theme', 'light');
+        themeText.textContent = 'Light';
+        themeIcon.textContent = '☀️';
+    }
+}
+
+function toggleMenu() {
+    const menu = document.getElementById('navbarMenu');
+    const toggle = document.querySelector('.navbar-toggle');
+    menu.classList.toggle('active');
+    toggle.classList.toggle('active');
+}
+
+document.querySelectorAll('.navbar-item').forEach(item => {
+    item.addEventListener('click', function(e) {
+        e.preventDefault();
+        const targetId = this.getAttribute('href').substring(1);
+        const targetElement = document.getElementById(targetId);
+        targetElement.scrollIntoView({ behavior: 'smooth' });
+        if (window.innerWidth <= 768) {
+            toggleMenu();
+        }
+        // URL'yi güncelle (tarayıcı geçmişinde temiz URL)
+        history.pushState(null, null, `/${targetId}`);
+    });
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    const shapes = document.querySelectorAll('.shape');
+    const bgGrid = document.querySelector('.bg-grid');
+    const floatingElements = document.querySelector('.floating-elements');
+
+    bgGrid.style.opacity = '1';
+    floatingElements.style.opacity = '1';
+    shapes.forEach((shape, index) => {
+        setTimeout(() => {
+            shape.classList.add('active');
+        }, index * 200);
+    });
+
+    const sections = document.querySelectorAll('.section');
+    const timeline = document.querySelector('.timeline');
+    const timelineItems = document.querySelectorAll('.timeline-item');
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
             }
-        }
-
-        function toggleMenu() {
-            const menu = document.getElementById('navbarMenu');
-            const toggle = document.querySelector('.navbar-toggle');
-            menu.classList.toggle('active');
-            toggle.classList.toggle('active');
-        }
-
-        document.querySelectorAll('.navbar-item').forEach(item => {
-            item.addEventListener('click', function(e) {
-                e.preventDefault();
-                const targetId = this.getAttribute('href').substring(1);
-                const targetElement = document.getElementById(targetId);
-                targetElement.scrollIntoView({ behavior: 'smooth' });
-                if (window.innerWidth <= 768) {
-                    toggleMenu();
-                }
-            });
         });
+    }, { threshold: 0.1 });
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const shapes = document.querySelectorAll('.shape');
-            const bgGrid = document.querySelector('.bg-grid');
-            const floatingElements = document.querySelector('.floating-elements');
+    sections.forEach(section => observer.observe(section));
+    if (timeline) observer.observe(timeline);
+    timelineItems.forEach(item => observer.observe(item));
 
-            bgGrid.style.opacity = '1';
-            floatingElements.style.opacity = '1';
-            shapes.forEach((shape, index) => {
-                setTimeout(() => {
-                    shape.classList.add('active');
-                }, index * 200);
-            });
-
-            const sections = document.querySelectorAll('.section');
-            const timeline = document.querySelector('.timeline');
-            const timelineItems = document.querySelectorAll('.timeline-item');
-
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('visible');
-                    }
-                });
-            }, { threshold: 0.1 });
-
-            sections.forEach(section => observer.observe(section));
-            if (timeline) observer.observe(timeline);
-            timelineItems.forEach(item => observer.observe(item));
-        });
+    // URL'ye göre doğru bölüme kaydır
+    const path = window.location.pathname.replace('/', '') || 'hero';
+    const targetSection = document.getElementById(path);
+    if (targetSection) {
+        targetSection.scrollIntoView({ behavior: 'smooth' });
+    }
+});
     </script>
 </body>
 </html>
